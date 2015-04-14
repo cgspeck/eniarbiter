@@ -1,0 +1,7 @@
+{
+	"eni_list": ["eni-1234", "eni-324", "eni-3245"],
+	"instance_tag_spec": {
+		"tag:aws:autoscaling:groupName":"ad-PROD",
+		"tag:Availability": "{\"availability\": \"24x7\"}"
+	}
+}
