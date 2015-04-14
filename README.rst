@@ -7,8 +7,9 @@ This utility lets you define a pool of Amazon Elastic Network Interfaces and ins
 When run, it will:
 
 #. find instances that match the criteria
-#. detach named ENIs from any instance deemed unhealthy
 #. attach any spare ENI to any healthy instance which does not have one
+
+When an instance is stopped or terminated, AWS detaches the ENI for you automatically.
 
 This requires environment variables or an IAM Role to be assigned to the machine it is being run on.
 

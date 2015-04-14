@@ -1,10 +1,25 @@
 import argparse
 import os
 import json
+import logging
 import sys
 
 from awsapi import AWSApi
 
+
+def setup_logging():
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    # create console handler and set level to debug
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    # add formatter to ch
+    ch.setFormatter(formatter)
+    # add ch to logger
+    logger.addHandler(ch)
+    return logger
 
 def main():
     parser = argparse.ArgumentParser(
@@ -18,38 +33,42 @@ def main():
     )
     args = parser.parse_args()
 
-    #from ipdb import set_trace; set_trace()
 
     config = json.loads(args.config[0].read())
 
+    assert 'region' in config
     assert 'eni_list' in config
     assert 'instance_tag_spec' in config
 
-    sys.exit()
+    logger = setup_logging()
 
+    a = AWSApi()
+    logger.info('Connecting to AWS...')
+    a.connect(config['region'])
+    logger.info('Retrieving ENIs...')
+    eni_list = config['eni_list']
+    free_enis = a.get_free_enis(eni_list)
+    logger.info('%s available ENIS' % len(free_enis))
 
-    # instances = find_instances()
+    instances = a.get_instances(config['instance_tag_spec'])
+    logger.info('%s running matching instances' % len(instances['running']))
 
-    # for instance in instances['unhealthy']:
-    #     if instances_has_relevant_eni:
-    #         detach_eni(instance)
+    failed = False
 
-    # for instance in instances['healthy']:
-    #     if not instances_has_relevant_eni:
-    #         attach_eni(instance)
+    for instance in instances['running']:
+        if bool(set(eni_list) & set(interface.id for interface in instance.interfaces)):
+            logger.info('Instance %s already has a specified ENI attached' % instance.id)
+        else:
+            if len(free_enis) > 0:
+                allocated_eni = free_enis.pop()
+                logger.info('Attaching interface %s to instance %s' % (allocated_eni, instance.id))
+                a.attach_eni(instance.id, allocated_eni)
+            else:
+                logger.critical('No available ENIs to attach to instance %s' % instance)
+                failed = True
 
-    # for f_name in file_list:
-    #     print('Loading {0}'.format(f_name))
-    #     qr.load(f_name)
-
-    #     if args.overwrite:
-    #         print('Saving over original')
-    #         qr.save(f_name)
-    #     else:
-    #         new_file_name = '{pre}_reduced.{extension}'.format(
-    #             pre=''.join(f_name.split('.')[:1]), extension=''.join(f_name.split('.')[1:]))
-    #         print('Saving to {0}'.format(new_file_name))
-    #         qr.save(new_file_name)
+    if failed:
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
