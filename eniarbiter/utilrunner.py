@@ -1,5 +1,4 @@
 import argparse
-import os
 import json
 import logging
 import sys
@@ -33,7 +32,6 @@ def main():
     )
     args = parser.parse_args()
 
-
     config = json.loads(args.config[0].read())
 
     assert 'region' in config
@@ -65,7 +63,7 @@ def main():
                     logger.info('Propose attching interface %s to instance %s' % (allocated_eni, instance.id))
                 else:
                     logger.info('Attaching interface %s to instance %s' % (allocated_eni, instance.id))
-                    #a.attach_eni(instance.id, allocated_eni)
+                    a.attach_eni(instance.id, allocated_eni)
             else:
                 logger.critical('No available ENIs to attach to instance %s' % instance)
                 failed = True
