@@ -61,8 +61,11 @@ def main():
         else:
             if len(free_enis) > 0:
                 allocated_eni = free_enis.pop()
-                logger.info('Attaching interface %s to instance %s' % (allocated_eni, instance.id))
-                a.attach_eni(instance.id, allocated_eni)
+                if args.dry_run:
+                    logger.info('Propose attching interface %s to instance %s' % (allocated_eni, instance.id))
+                else:
+                    logger.info('Attaching interface %s to instance %s' % (allocated_eni, instance.id))
+                    #a.attach_eni(instance.id, allocated_eni)
             else:
                 logger.critical('No available ENIs to attach to instance %s' % instance)
                 failed = True

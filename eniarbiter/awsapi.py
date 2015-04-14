@@ -7,9 +7,15 @@ class AWSApi(object):
         self.conn = None
 
     def connect(self, region):
+        '''
+        Boto connect to AWS Region
+        '''
         self.conn = boto.ec2.connect_to_region(region)
 
     def get_instances(self, filters):
+        '''
+        Get instances through boto and return them in running / not running buckets
+        '''
         all_instances = self.conn.get_only_instances(filters=filters)
         running_list = []
         not_running_list = []
@@ -33,5 +39,8 @@ class AWSApi(object):
         all_enis = self.conn.get_all_network_interfaces(eni_list)
         return [eni.id for eni in all_enis if eni.status == u'available']
 
-    def attach_eni(self, instance, eni):
-        pass
+    def attach_eni(self, instance_id, eni_id):
+        '''
+        Calls underlying boto method to attach specified eni to specified instance
+        '''
+        self.conn.attach_network_interface(eni_id, instance_id)
