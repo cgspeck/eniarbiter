@@ -39,8 +39,8 @@ class AWSApi(object):
         all_enis = self.conn.get_all_network_interfaces(eni_list)
         return [eni.id for eni in all_enis if eni.status == u'available']
 
-    def attach_eni(self, instance_id, eni_id):
+    def attach_eni(self, instance_id, eni_id, device_index, dry_run):
         '''
         Calls underlying boto method to attach specified eni to specified instance
         '''
-        self.conn.attach_network_interface(eni_id, instance_id)
+        self.conn.attach_network_interface(eni_id, instance_id, device_index, dry_run)

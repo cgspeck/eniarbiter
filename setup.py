@@ -11,7 +11,7 @@ setup(
     description='''
     AWS Elastic Network Interface Arbiter
     ''',
-    version='0.8.0',
+    version='0.9.0',
     author='Chris Speck',
     author_email='cgspeck@gmail.com',
     url='http://www.chrisspeck.com/',
