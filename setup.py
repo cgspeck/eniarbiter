@@ -12,11 +12,11 @@ setup(
     description='''
     AWS Elastic Network Interface Arbiter/Assigner
     ''',
-    version='1.1.1',
+    version='1.1.2',
     author='Chris Speck',
     author_email='chris@chrisspeck.com',
     url='https://github.com/cgspeck/eniarbiter',
-    download_url = 'https://github.com/cgspeck/eniarbiter/tarball/1.1.0',
+    download_url = 'https://github.com/cgspeck/eniarbiter/tarball/1.1.2',
     keywords = ['AWS', 'ec2', 'ENI', 'boto'],
     packages=['eniarbiter'],
     entry_points={
