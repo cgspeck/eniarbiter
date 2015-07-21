@@ -8,15 +8,15 @@ with open('requirements-test.txt') as f:
     required_test.extend(required)
 
 setup(
-    name='ENI Arbiter',
+    name='eniarbiter',
     description='''
-    AWS Elastic Network Interface Arbiter
+    AWS Elastic Network Interface Arbiter/Assigner
     ''',
-    version='1.0.0',
+    version='1.0.1',
     author='Chris Speck',
     author_email='chris@chrisspeck.com',
     url='https://github.com/cgspeck/eniarbiter',
-    download_url = 'https://github.com/cgspeck/eniarbiter/tarball/1.0.0',
+    download_url = 'https://github.com/cgspeck/eniarbiter/tarball/1.0.1',
     keywords = ['AWS', 'ec2', 'ENI', 'boto'],
     packages=['eniarbiter'],
     entry_points={
