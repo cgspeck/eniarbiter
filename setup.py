@@ -12,7 +12,7 @@ setup(
     description='''
     AWS Elastic Network Interface Arbiter/Assigner
     ''',
-    version='1.1.0',
+    version='1.1.1',
     author='Chris Speck',
     author_email='chris@chrisspeck.com',
     url='https://github.com/cgspeck/eniarbiter',

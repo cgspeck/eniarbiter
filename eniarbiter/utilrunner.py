@@ -65,7 +65,7 @@ def main():
                     allocated_eni = zone_freeenis[zone].pop()
                     device_index = len(instance.interfaces)
                     if args.dry_run:
-                        logger.info('Propose attching interface %s to instance %s as eth%s' % (allocated_eni, instance.id, device_index))
+                        logger.info('Propose attaching interface %s to instance %s as eth%s' % (allocated_eni, instance.id, device_index))
                     else:
                         logger.info('Attaching interface %s to instance %s as eth%s' % (allocated_eni, instance.id, device_index))
                         a.attach_eni(instance.id, allocated_eni, device_index, dry_run=args.dry_run)
