@@ -45,29 +45,33 @@ def main():
     a.connect(config['region'])
     logger.info('Retrieving ENIs...')
     eni_list = config['eni_list']
-    free_enis = a.get_free_enis(eni_list)
-    logger.info('%s available ENIS' % len(free_enis))
 
-    instances = a.get_instances(config['instance_tag_spec'])
-    logger.info('%s running matching instances' % len(instances['running']))
+    zone_freeenis, count = a.get_zone_free_eni_map(eni_list)
+
+    logger.info('%s available ENIS' % count)
+
+    zone_instances, count = a.get_zone_instance_map(config['instance_tag_spec'])
+    logger.info('%s running matching instances' % count)
 
     failed = False
 
-    for instance in instances['running']:
-        if bool(set(eni_list) & set(interface.id for interface in instance.interfaces)):
-            logger.info('Instance %s already has a specified ENI attached' % instance.id)
-        else:
-            if len(free_enis) > 0:
-                allocated_eni = free_enis.pop()
-                device_index = len(instance.interfaces)
-                if args.dry_run:
-                    logger.info('Propose attching interface %s to instance %s as eth%s' % (allocated_eni, instance.id, device_index))
-                else:
-                    logger.info('Attaching interface %s to instance %s as eth%s' % (allocated_eni, instance.id, device_index))
-                    a.attach_eni(instance.id, allocated_eni, device_index, dry_run=args.dry_run)
+    for zone, instances in zone_instances.iteritems():
+        for instance in instances['running']:
+            if bool(set(eni_list) & set(interface.id for interface in instance.interfaces)):
+                logger.info('Instance %s already has a specified ENI attached' % instance.id)
             else:
-                logger.critical('No available ENIs to attach to instance %s' % instance)
-                failed = True
+
+                if len(zone_freeenis[zone]) > 0:
+                    allocated_eni = zone_freeenis[zone].pop()
+                    device_index = len(instance.interfaces)
+                    if args.dry_run:
+                        logger.info('Propose attching interface %s to instance %s as eth%s' % (allocated_eni, instance.id, device_index))
+                    else:
+                        logger.info('Attaching interface %s to instance %s as eth%s' % (allocated_eni, instance.id, device_index))
+                        a.attach_eni(instance.id, allocated_eni, device_index, dry_run=args.dry_run)
+                else:
+                    logger.critical('No available ENIs in zone %s to attach to instance %s' % (zone, instance))
+                    failed = True
 
     if failed:
         sys.exit(1)
