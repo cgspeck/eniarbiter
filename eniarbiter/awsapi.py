@@ -88,3 +88,19 @@ class AWSApi(object):
         Calls underlying boto method to attach specified eni to specified instance
         """
         self.conn.attach_network_interface(eni_id, instance_id, device_index, dry_run)
+
+    def get_available_publicips(self, ip_list):
+        """
+        Returns a list containing available Public IP Address objects which may be a subset of ip_list
+
+        :param ip_list: list of public ip address to query
+        "type ip_list: list of strings with literal ip addresses, e.g. ['1.2.3.4', '1.2.3.5'...]
+
+        :returns: list of public ip address objects
+        :rtype: list of boto.ec2.address.Address
+        """
+        return [
+            address for address in self.conn.get_all_addresses()
+            if address.instance_id is None
+            and address.public_ip in ip_list
+        ]
