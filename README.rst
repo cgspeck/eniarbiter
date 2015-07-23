@@ -18,7 +18,7 @@ Depends on boto (2.38.0) and so requires Python 2.7 and is installable from PyPI
 Sample Config
 -------------
 
-See ``config.sample.json``.
+See ``config.sample*.json``.
 
 Running
 -------
