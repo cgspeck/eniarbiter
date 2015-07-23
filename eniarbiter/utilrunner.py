@@ -76,7 +76,6 @@ def main():
 
     if 'ip_list' in config:
         logger.info('Retrieving Elastic IPs...')
-        logger.info('Retrieving ENIs...')
         ip_list = config['ip_list']
         freeips = a.get_available_publicips(ip_list)
         logger.info('%s available Public IP Address objects' % len(freeips))
